@@ -11,8 +11,8 @@ import plotly.express as px
 app = Dash(__name__, external_stylesheets=[dbc.themes.VAPOR])
 mytitle = dcc.Markdown(children='# Mail activity per employee over time')
 mygraph = dcc.Graph(figure={})
-dropdown = dcc.Dropdown(options=['Bar Plot', 'Scatter Plot'],
-                        value='Bar Plot',  # initial value displayed when page first loads
+dropdown = dcc.Dropdown(options=['Scatter Plot'],
+                        value='Scatter Plot',  # initial value displayed when page first loads
                         clearable=False)
 
 # Customize your own Layout
@@ -28,12 +28,10 @@ def update_graph(user_input):  # function arguments come from the component prop
     if user_input == 'Scatter Plot':
         df = prepare_data()
         fig = px.scatter(data_frame=df, x="Date", y="From", color="From")
+        return fig # returned objects are assigned to the component property of the Output
     
-    else: 
-        pass
-    return fig  # returned objects are assigned to the component property of the Output
 
 
 # Run app
 if __name__=='__main__':
-    app.run_server(port=8053)
+   app.run_server(port=8053)

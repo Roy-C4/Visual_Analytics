@@ -44,14 +44,14 @@ def all_text(in_dir):
                 results = re.findall(date_pattern, text)
                 for i in results:
                     for j in i:
-                        if j is not '':
+                        if j != '':
                             article_date = j
                 cleaned_text = clean_text(text)
                 alltext[file_name] = (article_date, cleaned_text)
 
     return alltext
 
-in_dir = "C:/Users/didov/Desktop/DS&AI/Q3_VisualAnalytics/Visual_Analytics/Disappearance at GAStech/data/articles"
+in_dir = "D:/roy/selected/TU/books/visual_analytics/Disappearance at GAStech/data/articles"
 alltext = all_text(in_dir)
-print(alltext['844.txt'])
-print(len(alltext.keys()))
+#print(alltext['844.txt'])
+#print(len(alltext.keys()))
