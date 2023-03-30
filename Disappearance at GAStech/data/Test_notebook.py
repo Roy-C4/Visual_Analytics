@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
 import pandas as pd
 import re
 import plotly.express as px
@@ -11,8 +17,9 @@ from rake_nltk import Rake
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 import numpy as np
-  
 
+
+# In[2]:
 
 
 def prepare_data():
@@ -65,44 +72,71 @@ def all_text(in_dir):
 
     return alltext
 
-def plot_timeline(articles):
-    df = pd.DataFrame.from_dict(articles, 'index', columns=['Date', 'Keywords']).reset_index()
-    df['Date'] = pd.to_datetime(df['Date'])
-    df['Article length'] = df['Keywords'].apply(lambda x: len(x.split(' ')))
-    
-    fig = px.scatter(df, x='Date', y='Article length', title='Timeline with rangeslider')
-    fig.update_xaxes(rangeslider_visible=True)
-    fig.show()
+
 
 def find_keywords(all_text):
     pass
 
 
+# In[3]:
+
+
 in_dir = "C:/Users/didov/Desktop/DS&AI/Q3_VisualAnalytics/Visual_Analytics/Disappearance at GAStech/data/articles"
 alltext = all_text(in_dir)
+
+
+# In[24]:
+
+
 sentence = alltext['0.txt'][1]
 # lemmatizer = WordNetLemmatizer()
 # out = " ".join([lemmatizer.lemmatize(wd) for wd in sentence.split()])
 nodate={}
+dates={}
 for key, value in alltext.items():
-    for i in value[1].split():
-        if i == 'aardgasbedrijf':
-            print(key)
+#     for i in value[1].split():
+#         if i == 'aardgasbedrijf':
+#             print(key)
     nodate[key] = value[1]
+    dates[key] = value[0]
 
 vectorizer = CountVectorizer()
-X = vectorizer.fit_transform(nodate.values())
+X = vectorizer.fit_transform(list(nodate.values()))
 word_list = vectorizer.get_feature_names_out()
 
+df = pd.DataFrame(X.todense(), index=nodate.keys(), columns=vectorizer.get_feature_names_out())
+df = df.sort_values(by='Date')
+
+df
 # Added [0] here to get a 1d-array for iteration by the zip function. 
-count_list = np.asarray(X.sum(axis=0))[0]
-word_counts = dict(zip(word_list, count_list))
-l = {k: v for k, v in sorted(word_counts.items(), key=lambda item: item[1], reversed=True)}
+# count_list = np.asarray(X.sum(axis=0))[0]
+# word_counts = dict(zip(word_list, count_list))
+# l = {k: v for k, v in sorted(word_counts.items(), key=lambda item: item[1], reverse=True)}
 # print(l) 
-# print(word_counts['death'])
-# print(sorted(word_counts))
-# print(X)
-# print(alltext)
-plot_timeline(alltext)
-# print(alltext['844.txt'])
-# print(len(alltext.keys()))
+
+
+# In[18]:
+
+
+df['Date'] = dates
+df[['kronos', 'Date']]
+
+
+# In[23]:
+
+
+def plot_timeline(dataframe, keyword):
+    keyword = keyword.lower()
+    df = dataframe[[keyword, 'Date']]
+    fig = px.line(df, x='Date', y=keyword, title=f'Occurance of {keyword}')
+    fig.update_xaxes(rangeslider_visible=True)
+    fig.show()
+    
+plot_timeline(df, 'death')
+
+
+# In[ ]:
+
+
+
+
