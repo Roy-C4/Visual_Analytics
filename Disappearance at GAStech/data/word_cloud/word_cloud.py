@@ -9,7 +9,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from wordcloud import WordCloud
 
-in_dir = r'D:\roy\selected\TU\books\visual analytics\1. Disappearance at GAStech\1. Disappearance at GAStech\data\output_article'
+in_dir = r'D:\roy\selected\TU\books\visual_analytics\Disappearance at GAStech\data\word_cloud'
 
 
 def clean_text(text):
@@ -25,7 +25,7 @@ def cloud(text):
     word_cld = WordCloud(width=800, height=800,
                          background_color='white').generate(text)
     fig = px.imshow(word_cld)
-    fig.update_layout(title_text='Word Cloud')
+    fig.update_layout()
     return fig
 
 
@@ -46,11 +46,11 @@ fig = cloud(cleaned_text)
             fig = cloud(cleaned_text)"""
 
 
-app = dash.Dash()
+"""app = dash.Dash()
 
 app.layout = html.Div([
     dcc.Graph(figure=fig)
 ])
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True)"""

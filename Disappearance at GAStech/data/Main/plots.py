@@ -18,6 +18,11 @@ options = [{'label': 'death', 'value':'death'},
         {'label': 'pok',  'value':'pok'}, 
         {'label': 'police', 'value':'police'}]
 keywords = ['death', 'fire', 'pok', 'police']
+mytitle = dcc.Markdown(children='# Mail activity per employee over time')
+mygraph = dcc.Graph(figure={})
+dropdown = dcc.Dropdown(options=['Scatter Plot'],
+                        value='Scatter Plot',  # initial value displayed when page first loads
+                        clearable=False)
 
 # Customize your own Layout
 app.layout = html.Div(
@@ -55,4 +60,4 @@ def update_graph(values):  # function arguments come from the component property
 
 # Run app
 if __name__=='__main__':
-    app.run_server(port=8053)
+   app.run_server(port=8053)

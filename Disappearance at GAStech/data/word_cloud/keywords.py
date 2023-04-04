@@ -5,8 +5,8 @@ from contextlib import redirect_stdout
 from rake_nltk import Rake
 rake_nltk_var = Rake()
 
-in_dir_path = r'D:\roy\selected\TU\books\visual analytics\1. Disappearance at GAStech\1. Disappearance at GAStech\data\articles'
-out_dir_path = r'D:\roy\selected\TU\books\visual analytics\1. Disappearance at GAStech\1. Disappearance at GAStech\data\output_article'
+in_dir_path = r'D:/roy/selected/TU/books/visual_analytics/Disappearance at GAStech/data/articles'
+out_dir_path = r'D:/roy/selected/TU/books/visual_analytics/Disappearance at GAStech/data/output_article'
 
 for file_name in os.listdir(in_dir_path):
     if file_name.endswith('.txt'):

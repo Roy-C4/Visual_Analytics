@@ -5,19 +5,11 @@ import os
 import string
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-import dateutil.parser as parser
-from datetime import datetime
-from rake_nltk import Rake
-from nltk.stem import WordNetLemmatizer
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-import numpy as np
-  
-
-
 
 def prepare_data():
     # Import data
     df = pd.read_csv('email headers.csv', sep=",")
+    print(df.head())
     # Fix columns
     df['From'].astype(str)
     df['Date'] = pd.to_datetime(df['Date'])
@@ -31,8 +23,7 @@ def clean_text(text):
     tokens = word_tokenize(text.lower())
     stop_words = set(stopwords.words('english'))
     words = [word for word in tokens if word.isalpha() and word not in stop_words]
-    words = ' '.join(words)
-    return words
+    return ' '.join(words)
 
 def all_text(in_dir):
     '''
@@ -43,7 +34,6 @@ def all_text(in_dir):
     alltext = {}
     date_pattern = r"(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})|([A-Z][a-z]{2}\s\d{1,2},?\s\d{2,4})|(\d{4}[/-]\d{2}[/-]\d{2}|\b\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}\b)"
 
-    rake_nltk_var = Rake()
 
     for file_name in os.listdir(in_dir):
         if file_name.endswith('.txt'):
@@ -56,12 +46,12 @@ def all_text(in_dir):
                     for j in i:
                         if j != '':
                             article_date = j
-                            article_date = parser.parse(article_date)
-                            article_date = article_date.strftime("%Y/%m/%d")
                 cleaned_text = clean_text(text)
-                # rake_nltk_var.extract_keywords_from_text(cleaned_text)
-                # keyword_extracted = rake_nltk_var.get_ranked_phrases()
-                alltext[file_name] = [article_date, cleaned_text]
+                alltext[file_name] = (article_date, cleaned_text)
 
     return alltext
 
+in_dir = "D:/roy/selected/TU/books/visual_analytics/Disappearance at GAStech/data/articles"
+alltext = all_text(in_dir)
+#print(alltext['844.txt'])
+#print(len(alltext.keys()))

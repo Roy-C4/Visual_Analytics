@@ -26,7 +26,7 @@ def prepare_data():
     # Import data
     df = pd.read_csv('email headers.csv', sep=",")
     # Fix columns
-    df['From'].astype(str)
+    df['From'].astype(str) 
     df['Date'] = pd.to_datetime(df['Date'])
     # df['Sender'] = [x.split('@')[0] for x in df['From']]
     # df['Sender'] = [x.replace('.', ', ') for x in df['Sender']]
@@ -81,7 +81,7 @@ def find_keywords(all_text):
 # In[3]:
 
 
-in_dir = "C:/Users/didov/Desktop/DS&AI/Q3_VisualAnalytics/Visual_Analytics/Disappearance at GAStech/data/articles"
+in_dir = "D:\roy\selected\TU\books\visual_analytics\Disappearance at GAStech\data\data_prep\articles"
 alltext = all_text(in_dir)
 
 
