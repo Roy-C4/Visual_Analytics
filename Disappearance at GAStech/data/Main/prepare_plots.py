@@ -101,9 +101,8 @@ def create_frequency_dataframe():
     df['Date'] = dates
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.sort_values(by='Date')
-
+    
     return df
-
 
 def plot_timeline(dataframe, keywords):
     keywords.append('Date')
