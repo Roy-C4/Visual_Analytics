@@ -19,6 +19,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
+
 def prepare_data():
     # Import data
     df = pd.read_csv('email headers.csv', sep=",")
@@ -67,42 +68,38 @@ def all_text(in_dir):
 
     return alltext
 
-def cluster_articles(article_dict):
+def vectorize_documents(article_dict):
     corpus = article_dict.values()
-    KM = KMeans(n_clusters=20, random_state=0, n_init="auto")
     vectorizer = TfidfVectorizer()
 
     X = vectorizer.fit_transform(corpus)
 
-    KM.fit(X)
-    # labels = km.labels_
-    prediction = KM.predict(X)
+    return X, vectorizer
 
-    df.head()
-    df['Date'] = dates
-    df['Date'] = pd.to_datetime(df['Date'])
-    df = df.sort_values(by='Date')
-
-    df[['kronos', 'Date']]
-
-def create_frequency_dataframe():
+def create_frequency_dataframe(only_output_dictionary=False):
     in_dir = "C:/Users/didov/Desktop/DS&AI/Q3_VisualAnalytics/Visual_Analytics/Disappearance at GAStech/data/data_prep/articles"
     alltext = all_text(in_dir)
     nodate={}
     dates={}
+
     for key, value in alltext.items():
         nodate[key] = value[1]
         dates[key] = value[0]
-
-    vectorizer = CountVectorizer()
-    X = vectorizer.fit_transform(list(nodate.values()))
-
-    df = pd.DataFrame(X.todense(), index=nodate.keys(), columns=vectorizer.get_feature_names_out())
-    df['Date'] = dates
-    df['Date'] = pd.to_datetime(df['Date'])
-    df = df.sort_values(by='Date')
     
-    return df
+    if only_output_dictionary == False:
+        vectorizer = CountVectorizer()
+        X = vectorizer.fit_transform(list(nodate.values()))
+
+        df = pd.DataFrame(X.todense(), index=nodate.keys(), columns=vectorizer.get_feature_names_out())
+        df['Date'] = dates
+        df['Date'] = pd.to_datetime(df['Date'])
+        df = df.sort_values(by='Date')
+
+        return df
+    else:
+        return nodate
+        
+
 
 def plot_timeline(dataframe, keywords):
     keywords.append('Date')
@@ -148,20 +145,36 @@ def find_optimal_clusters(data, max_k):
     ax.set_title('SSE by Cluster Center Plot')
     
 
-def plot_tsne_pca(data, labels):
-    pca = PCA(n_components=2).fit_transform(np.asarray(data.todense()))
-    tsne = TSNE().fit_transform(PCA(n_components=50).fit_transform(np.asarray(data.todense())))
+def plot_tsne_pca(show_clusters=True):
+    in_dir = "C:/Users/didov/Desktop/DS&AI/Q3_VisualAnalytics/Visual_Analytics/Disappearance at GAStech/data/data_prep/articles"
+    alltext = all_text(in_dir)
+    corpus = {}
+    for key, value in alltext.items():
+        corpus[key] = value[1]
+    corpus = corpus.values()
+    KM = KMeans(n_clusters=12, random_state=0, n_init="auto")
+    vectorizer = TfidfVectorizer()
 
-    cluster_keywords = get_top_keywords(data, prediction, vectorizer.get_feature_names_out(), 5)
-    new_labels = [cluster_keywords[i] for i in labels]
+    X = vectorizer.fit_transform(corpus)
+    KM.fit(X)
+    prediction = KM.predict(X)
+
+    pca = PCA(n_components=2).fit_transform(np.asarray(X.todense()))
+    tsne = TSNE().fit_transform(PCA(n_components=50).fit_transform(np.asarray(X.todense())))
+
+    cluster_keywords = get_top_keywords(X, prediction, vectorizer.get_feature_names_out(), 5)
+    new_labels = [cluster_keywords[i] for i in prediction]
    
-    fig = px.scatter(x=pca[:, 0], y=pca[:, 1], color=new_labels, title="PCA Cluster plot")
-    fig.show()
+    if show_clusters==False:
+        fig = px.scatter(x=pca[:, 0], y=pca[:, 1], title="PCA Cluster plot")
+    else:
+        fig = px.scatter(x=pca[:, 0], y=pca[:, 1], color=new_labels, title="PCA Cluster plot")
     
     fig2 = px.scatter(x=tsne[:, 0], y=tsne[:, 1], color=new_labels, title="TSNE Cluster plot")
-    fig2.show()
+    
+    return fig, fig2
 
-
+    
 def get_top_keywords(data, clusters, labels, n_terms):
     df = pd.DataFrame(data.todense()).groupby(clusters).mean()
     
@@ -171,39 +184,22 @@ def get_top_keywords(data, clusters, labels, n_terms):
         
     return keyword_dict
 
+from sklearn.metrics.pairwise import cosine_similarity
 
+def get_similar_articles(word):
+    article_dict = create_frequency_dataframe(only_output_dictionary=True)
+    X, vectorizer = vectorize_documents(article_dict)
+    query_vector = vectorizer.transform([word])
 
+    # Compute the cosine similarity between the query vector and all article vectors
+    similarity_scores = cosine_similarity(X, query_vector)
 
+    # Get the indices of the most similar articles
+    most_similar_indices = similarity_scores.argsort(axis=0)[::-1][:10]
 
+    article_titles = list(article_dict.keys())
 
+    most_similar_articles = [(article_titles[int(i[0])], similarity_scores[i][0][0]) for i in most_similar_indices]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# In[ ]:
-
-
-
-
+    # Print the titles of the most similar articles
+    return most_similar_articles

@@ -5,45 +5,80 @@ from dash import Dash, dcc, Output, Input, html  # pip install dash
 import dash_bootstrap_components as dbc    # pip install dash-bootstrap-components
 import prepare_plots
 import plotly.express as px
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import cross_validate
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
 
 
 
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.VAPOR])
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
 # Global dataframe for the word frequencies
 df = prepare_plots.create_frequency_dataframe()
-options = [{'label': 'death', 'value':'death'},
-    	{'label': 'fire',  'value':'fire'},
-        {'label': 'pok',  'value':'pok'}]
+
+list_value = ['No similar articles']
+
+options = [{'label': 'Death', 'value':'death'},
+    	{'label': 'Fire',  'value':'fire'},
+        {'label': 'Pok',  'value':'pok'}]
 keywords = ['death', 'fire', 'pok']
 
 
 ## Help
-app.layout = html.Div([
+app.layout = html.Div([ 
     html.Div([
         dcc.Checklist(
             options=options,
             inline=True,
             value=keywords,
-            id="checklist")
+            id="checklist", 
+            inputStyle={"margin-left": "10px", "margin-right": "5px"})
         ,
-        dcc.Graph(id="stackedbar", figure={}) 
-        ], style={'margin':25}),
-    html.Div([html.H1('User input', style={'textAlign': 'center', 'margin':25,}),
-            html.Br(), 
-            dcc.Input(id='input-box', type='text', value='', debounce=True)],
-            style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-    html.Div([dcc.Graph(id="article_similarity", figure={}, style={'width':'40%', 'margin':25, 'display': 'inline-block'}),
-               dcc.Graph(id="article_clustering", figure={}, style={'width':'40%', 'margin':25, 'display': 'inline-block'}),
+        dcc.Graph(
+            id="stackedbar", 
+            figure={}) 
+        ], style={'margin':100}),
     
+    html.Div([
+        html.H1(
+            id='User input', 
+            style={'textAlign': 'center', 'margin':25}
+            ),
+        html.Br()
+        , 
+        dcc.Input(
+            id='input-box', 
+            type='text', 
+            value='Search for a word!', 
+            debounce=True
+            )],
+            style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}
+        ),
+    html.Div([
+        dcc.Dropdown(
+            ['PCA', 'tSNE'], 
+            value='PCA', 
+            id='dropdown-clusters'
+            ),
+        ], style={'padding': '50px'}),
+    html.Div([
+        html.Div(
+        className="trend",
+        children=[
+            html.Ul(id='my-list', children=[html.Li(i) for i in list_value])
+            ],
+        ),
+        dcc.Graph(
+            id="article_clustering", 
+            figure={}, 
+            style={'width':'50%', 'margin':25, 'display': 'inline-block'}
+            )
+        ], style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+        ])
 
-    ])
-    ]
-    
-)
- 
 # Callback for updating Word-Frequency graph based on checklist
 @app.callback(
     Output("stackedbar", component_property='figure'),
@@ -84,26 +119,35 @@ def update_checklist(input_value):
         if value not in all_words:
             return options
         else:
-            options.append({'label': value, 'value': value})
+            options.append({'label': value.capitalize(), 'value': value})
             return options    
 
     else:
         return options   
     
 
-# @app.callback(
-#     Output("output", "children"),
-#     Input("stackedbar", "clickData"),
-# )
+@app.callback(
+    Output("article_clustering", "figure"),
+    Input("dropdown-clusters", "value"),
+)
 
-# def graph_onclick(click_data):
-#     if click_data is not None:
-#         print(click_data)
-#         keyword = click_data['points'][0]['x']
-#         filtered_articles = [article['title'] for article in news_articles if keyword in article['keywords']]
-#         return html.Ul([html.Li(article_title) for article_title in filtered_articles])
-
+def update_cluster_graphs(input): 
+    pca, tsne = prepare_plots.plot_tsne_pca()
+    if input == 'tSNE':
+        return tsne
+    else:
+        return pca
     
+@app.callback(
+    Output("my-list", "children"),
+    Input("input-box", "value"))
+
+def plot_similar_articles(word):
+    if word:
+        similar_articles = prepare_plots.get_similar_articles(word)
+        return [html.Li(i[0], str(i[1])) for i in similar_articles]
+    
+
 
 
 
