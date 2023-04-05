@@ -30,8 +30,11 @@ app.layout = html.Div([
             id="checklist")
         ,
         dcc.Graph(id="stackedbar", figure={}) 
-        ]),
-    html.Div([html.H1('User input', style={'align':'center',}), html.Br(), dcc.Input(id='input-box', type='text', value='', debounce=True, style={'horizontal-align':'center'})]),
+        ], style={'margin':25}),
+    html.Div([html.H1('User input', style={'textAlign': 'center', 'margin':25,}),
+            html.Br(), 
+            dcc.Input(id='input-box', type='text', value='', debounce=True)],
+            style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
     html.Div([dcc.Graph(id="article_similarity", figure={}, style={'width':'40%', 'margin':25, 'display': 'inline-block'}),
                dcc.Graph(id="article_clustering", figure={}, style={'width':'40%', 'margin':25, 'display': 'inline-block'}),
     
