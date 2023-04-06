@@ -30,54 +30,54 @@ keywords = ['death', 'fire', 'pok']
 ## Help
 app.layout = html.Div([ 
     html.Div([
+    html.H1('Article Analysis & Clustering', style={'padding':'20px'})
+    ]),
+
+    html.Div([
         dcc.Checklist(
             options=options,
             inline=True,
             value=keywords,
             id="checklist", 
-            inputStyle={"margin-left": "10px", "margin-right": "5px"})
-        ,
+            inputStyle={"margin-left": "10px", "margin-right": "5px"}
+        ),
         dcc.Graph(
             id="stackedbar", 
-            figure={}) 
-        ], style={'margin':100}),
-    
+            figure={}
+        ) 
+    ], style={'margin':'auto'}),
+    # Add the user input box centered in the middle
     html.Div([
-        html.H1(
-            id='User input', 
-            style={'textAlign': 'center', 'margin':25}
-            ),
-        html.Br()
-        , 
-        dcc.Input(
-            id='input-box', 
-            type='text', 
-            value='Search for a word!', 
-            debounce=True
-            )],
-            style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}
+        html.H2('Enter your input:', style={'padding':'20px'}),
+        dcc.Input(id='input-box', 
+                  type='text', 
+                  value=''
         ),
-    html.Div([
-        dcc.Dropdown(
-            ['PCA', 'tSNE'], 
-            value='PCA', 
-            id='dropdown-clusters'
-            ),
-        ], style={'padding': '50px'}),
-    html.Div([
-        html.Div(
-        className="trend",
-        children=[
+    ], style={'textAlign': 'center'}),
+        
+    html.Div([    
+        html.Div([
             html.Ul(id='my-list', children=[html.Li(i) for i in list_value])
-            ],
-        ),
-        dcc.Graph(
-            id="article_clustering", 
-            figure={}, 
-            style={'width':'50%', 'margin':25, 'display': 'inline-block'}
+        ]),
+            
+        html.Div([
+            html.Div([
+                dcc.Dropdown(
+                    options=[{'label': 'PCA', 'value': 'PCA'},
+                             {'label': 'tSNE', 'value': 'tSNE'}], 
+                    value='PCA', 
+                    id='dropdown-clusters'
+                ),
+            ], style={'padding': '50px'}),
+            
+            dcc.Graph(
+                id="article_clustering", 
+                figure={}, 
+                style={'width':'50%', 'margin':25, 'display': 'inline-block'}
             )
-        ], style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-        ])
+        ], style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'})
+    ]) 
+])
 
 # Callback for updating Word-Frequency graph based on checklist
 @app.callback(
