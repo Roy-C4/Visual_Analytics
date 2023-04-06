@@ -92,7 +92,7 @@ def create_frequency_dataframe(only_output_dictionary=False):
 
         df = pd.DataFrame(X.todense(), index=nodate.keys(), columns=vectorizer.get_feature_names_out())
         df['Date'] = dates
-        df['Date'] = pd.to_datetime(df['Date'])
+        # df['Date'] = pd.to_datetime(df['Date'])
         df = df.sort_values(by='Date')
 
         return df
@@ -186,9 +186,8 @@ def get_top_keywords(data, clusters, labels, n_terms):
 
 from sklearn.metrics.pairwise import cosine_similarity
 
-def get_similar_articles(word):
-    article_dict = create_frequency_dataframe(only_output_dictionary=True)
-    X, vectorizer = vectorize_documents(article_dict)
+def get_similar_articles(word, article_dict, X, vectorizer ):
+
     query_vector = vectorizer.transform([word])
 
     # Compute the cosine similarity between the query vector and all article vectors
@@ -203,3 +202,11 @@ def get_similar_articles(word):
 
     # Print the titles of the most similar articles
     return most_similar_articles
+
+def classify_cluster(word, model, X, vectorizer, original_predictions):
+    query_vector = vectorizer.transform([word])
+    cluster_keywords = get_top_keywords(X, original_predictions, vectorizer.get_feature_names_out(), 5)
+    preprocess = np.asarray(query_vector.todense())
+    prediction = model.predict(preprocess)
+    
+    return prediction[0], cluster_keywords
