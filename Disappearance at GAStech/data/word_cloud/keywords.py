@@ -3,10 +3,17 @@ import nltk
 from contextlib import redirect_stdout
 
 from rake_nltk import Rake
+
+"""
+Keywords extraction
+
+"""
+
+
 rake_nltk_var = Rake()
 
-in_dir_path = r'D:/roy/selected/TU/books/visual_analytics/Disappearance at GAStech/data/articles'
-out_dir_path = r'D:/roy/selected/TU/books/visual_analytics/Disappearance at GAStech/data/output_article'
+in_dir_path = r'D:/roy/selected/TU/books/visual_analytics/New folder (2)/Disappearance at GAStech/data/data_prep/articles'
+out_dir_path = r'D:/roy/selected/TU/books/visual_analytics/New folder (2)/Disappearance at GAStech/data/data_prep/output_article'
 
 for file_name in os.listdir(in_dir_path):
     if file_name.endswith('.txt'):

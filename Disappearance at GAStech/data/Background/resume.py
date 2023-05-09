@@ -1,24 +1,31 @@
 import os
 import nltk
 from contextlib import redirect_stdout
-
 from rake_nltk import Rake
+
+
+# Create an instance of Rake object from rake_nltk library
 rake_nltk_var = Rake()
 
-in_dir_path = r'D:\roy\selected\TU\books\visual_analytics\Disappearance at GAStech\data\Background\resumes\txt_versions'
-out_dir_path = r'D:\roy\selected\TU\books\visual_analytics\Disappearance at GAStech\data\Background\output_resume'
+in_dir_path = r'D:\roy\selected\TU\books\visual_analytics\New folder (2)\Disappearance at GAStech\data\Background\resumes\txt_versions'
+out_dir_path = r'D:\roy\selected\TU\books\visual_analytics\New folder (2)\Disappearance at GAStech\data\Background\output_resume'
 
-keywords = [" Armed forces of Kronos", "Protectors of Kronos", "Kronos Armed", "Armed", "Forces", "Protectors", "PoK"]
 
+# Define a list of keywords to search for
+keywords = [" Armed forces of Kronos", "Protectors of Kronos", "Kronos Armed", "Armed", "Forces", "Protectors", "PoK" "Military Services Kronos", "Kronos Miltary", "Military Kronos"]
+
+
+
+# Loop through each file in the input directory
 for file_name in os.listdir(in_dir_path):
-    if file_name.endswith('.txt'):
-        input_path = os.path.join(in_dir_path, file_name)
+    if file_name.endswith('.txt'):                         # Check if the file is a text file
+        input_path = os.path.join(in_dir_path, file_name)  # Set input and output file paths
         output_path = os.path.join(out_dir_path, file_name)
         with open(input_path, 'r') as infile:
             with open(output_path, 'w') as outfile:
                 text = infile.read()
                 for j in text.split():
-                    if j in keywords:
+                    if j in keywords:                      # Check if the word is a keyword. If the word is a keyword, write the entire text to the output file
                         print("keyword present", j)
                         outfile.write("%s\n"%text)
                         print("File moved succesfully")

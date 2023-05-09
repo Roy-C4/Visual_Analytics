@@ -26,23 +26,9 @@ for file_name in os.listdir(in_dir_path):
         with open(input_path, 'r') as infile:
             text = infile.read()    
             tokenized_corpus = [nltk.word_tokenize(doc.lower()) for doc in text]
-            print(tokenized_corpus)
+            print(tokenized_corpus)s
             cleaned_text = clean_text(tokenized_corpus)
-            # filtered_corpus = [[word for word in doc if word not in stop_words] for doc in tokenized_corpus]
-            # print(filtered_corpus)
-#             cv = CountVectorizer()
-#             X = cv.fit_transform([' '.join(doc) for doc in filtered_corpus])
-#             words = cv.get_feature_names()
-#             word_counts = word_counts.toarray()
-            
-#             for i in range(len(words)):
-#                 word_dict[words[i]] = word_counts[0][i]
 
-# sorted_dict = {k: v for k, v in sorted(word_dict.items(), key=lambda item: item[1], reverse=True)}
-
-
-
-# print(sorted_dict)
                 
 
             
